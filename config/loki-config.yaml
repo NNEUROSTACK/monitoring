@@ -1,0 +1,38 @@
+auth_enabled: false # Set to true and configure if you need authentication for Loki
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096 # For internal communication, e.g., from distributors
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki
+  storage:
+    filesystem: # Stores chunks and index in the local filesystem
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1 # For single instance setup
+  ring:
+    kvstore:
+      store: inmemory # Suitable for single instance, consider Consul/Etcd for HA
+
+schema_config:
+  configs:
+    - from: 2020-10-24 # A date in the past
+      store: boltdb-shipper # Recommended for single binary, stores index in BoltDB and ships to object storage (or filesystem here)
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h # How frequently to create new index tables
+
+ruler: # For alerts based on logs (LogQL alerts)
+  alertmanager_url: http://localhost:9093 # If you set up Alertmanager
+
+# Limits for tenants (multi-tenancy is supported but 'fake' tenant is used by default)
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h # 7 days
+  ingestion_rate_mb: 15 # Max ingestion rate per tenant (MB/s)
+  ingestion_burst_size_mb: 20

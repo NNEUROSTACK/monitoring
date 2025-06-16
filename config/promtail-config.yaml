@@ -1,0 +1,55 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: docker_containers
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      - source_labels: ["__meta_docker_container_label_logging_jobname"]
+        target_label: "job"
+      - source_labels: ["__meta_docker_container_label_logging_appname"]
+        target_label: "app"
+
+      - source_labels: ["__meta_docker_container_name"]
+        regex: "/(.*)"
+        target_label: "container_name"
+      - source_labels: ["__meta_docker_container_name"]
+        regex: "/(.*)"
+        target_label: "job" # Fallback job label
+        replacement: "$1"
+
+      # Specific relabeling for your Node.js application (api_mykreno)
+      - source_labels: ["__meta_docker_container_name"]
+        regex: ".*/api_mykreno.*"
+        target_label: "app"
+        replacement: "api_mykreno"
+
+    pipeline_stages:
+      - match:
+          # Only apply this JSON parsing to logs from your Node.js app
+          selector: '{app="api_mykreno"}'
+          stages:
+            - json:
+                # Extract fields from the JSON log line
+                expressions:
+                  level: level # pino's numeric level
+                  pino_level: level_label # pino's text label if present
+                  status_code: "res.statusCode"
+                  url: "req.url"
+                  msg: msg
+                  context: context # For kafka/websocket logs
+            - labels:
+                # Create indexed labels from the extracted fields
+                level: # Use text label if available
+                status_code:
+                url:
+                context:
