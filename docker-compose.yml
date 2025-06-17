@@ -74,12 +74,10 @@ services:
     restart: unless-stopped
     environment:
       # This connection string tells the exporter how to connect to your database.
-      # It uses the service name 'db' as the host because they are on the same Docker network.
-      - DATA_SOURCE_NAME=postgresql://postgres:dGhpcyBpcyBhIHNlY3JldCB@db:5432/adminjs?sslmode=disable
+      # It uses the service name 'postgres_mykreno' as the host because they are on the same Docker network.
+      - DATA_SOURCE_NAME=postgresql://postgres:dGhpcyBpcyBhIHNlY3JldCB@postgres_mykreno:5432/adminjs?sslmode=disable
     ports:
       # Expose the exporter's /metrics endpoint on port 9187 for Prometheus and for debugging.
       - "3103:9187"
     networks:
       - dev-env
-    depends_on:
-      - db # Ensures the database is started before the exporter tries to connect.
