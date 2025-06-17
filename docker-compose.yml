@@ -78,6 +78,6 @@ services:
       - DATA_SOURCE_NAME=postgresql://postgres:dGhpcyBpcyBhIHNlY3JldCB@postgres_mykreno:5432/adminjs?sslmode=disable
     ports:
       # Expose the exporter's /metrics endpoint on port 9187 for Prometheus and for debugging.
-      - "3103:9187"
+      - "9187"
     networks:
       - dev-env

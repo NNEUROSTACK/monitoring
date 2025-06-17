@@ -10,4 +10,4 @@ scrape_configs:
       - targets: ["localhost:3102"]
   - job_name: "postgres_exporter"
     static_configs:
-      - targets: ["postgres_exporter_mykreno:3103"]
+      - targets: ["postgres_exporter_mykreno:9187"]
