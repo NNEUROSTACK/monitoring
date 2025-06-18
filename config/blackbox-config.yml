@@ -1,0 +1,13 @@
+modules:
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      # Add "HTTP/2.0" to the list of valid versions
+      valid_http_versions: ["HTTP/1.1", "HTTP/2", "HTTP/2.0"]
+      valid_status_codes: [200, 401]
+      method: GET
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true # Good to have this
+      follow_redirects: true # Good to have this
+      enable_http2: true # This should be explicitly true for HTTP/2
