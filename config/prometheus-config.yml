@@ -20,10 +20,7 @@ scrape_configs:
       module: [http_2xx] # Use the 'http_2xx' module defined in blackbox.yml
     static_configs:
       - targets:
-          # Your actual application URL that returned 503
-          - "https://step-dev.azurewebsites.net"
-          # Add any other websites you want to check with the same module
-          - "https://www.google.com" # Keeping this for illustration
+          - "step-test-env-g3d0fpf4afeabpaq.westeurope-01.azurewebsites.net"
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
